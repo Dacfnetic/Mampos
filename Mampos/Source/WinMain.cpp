@@ -18,6 +18,7 @@
 	INT				WindowHeight;
 
 	HICON			hIcon;
+	
 #pragma endregion
 /* ------------------------------------------------------- */
 
@@ -41,6 +42,7 @@ int CALLBACK WinMain(HINSTANCE, HINSTANCE, LPSTR, INT)
 {
 	InitializeVariables();
 	CreateWindowClass();
+	//CreateWindowClass2();
 	InitializeWindow();
 	MessageLoop();
 
@@ -57,6 +59,19 @@ LRESULT CALLBACK WindowProcess(HWND hWnd, UINT message, WPARAM wparam, LPARAM lp
 {
 	switch (message)
 	{
+	case WM_CREATE:
+	{
+		HMENU hMenu = CreateMenu();;
+		AppendMenu(hMenu, MF_POPUP, (UINT_PTR)hMenu, L"Lineas guía");
+		AppendMenu(hMenu, MF_POPUP, NULL, L"Dibujar");
+		AppendMenu(hMenu, MF_POPUP, NULL, L"Análisis");
+		AppendMenu(hMenu, MF_POPUP, NULL, L"Memoria de cálculo");
+		AppendMenu(hMenu, MF_POPUP, NULL, L"Planos");
+		AppendMenu(hMenu, MF_POPUP, NULL, L"Presupuesto");
+		AppendMenu(hMenu, MF_POPUP, NULL, L"Control de ejecución");
+		SetMenu(hWnd, hMenu);
+		break;
+	}	
 	case WM_DESTROY:
 		PostQuitMessage(0);
 		break;
@@ -74,6 +89,7 @@ VOID InitializeVariables()
 	WindowHeight = 768; /* Alto inicial de la ventana principal */
 
 	hIcon = LoadIcon(HInstance(), MAKEINTRESOURCE(IDI_MAINICON));
+	
 }
 VOID CreateWindowClass()
 {
@@ -102,7 +118,10 @@ VOID CreateWindowClass()
 }
 VOID InitializeWindow()
 {
-	HWND hWnd = CreateWindow(WindowClass, WindowTitle, WS_OVERLAPPEDWINDOW | WS_MAXIMIZE, CW_USEDEFAULT,
+	HWND hWnd = CreateWindowEx(0, WindowClass, WindowTitle, WS_CAPTION | WS_MINIMIZEBOX | WS_SYSMENU,
+		200, 200, 640, 480, nullptr, nullptr, HInstance(), nullptr);
+
+	HWND hWnd2 = CreateWindow(WindowClass, WindowTitle, WS_CHILD, CW_USEDEFAULT,
 		0, WindowWidth, WindowHeight, nullptr, nullptr, HInstance(), nullptr);
 
 
@@ -111,7 +130,11 @@ VOID InitializeWindow()
 		MessageBox(0, L"Fallaste prro!", 0, 0);
 		PostQuitMessage(0);
 	}
-	ShowWindow(hWnd, SW_SHOW);
+	else
+	{
+		ShowWindow(hWnd, SW_SHOW);
+		ShowWindow(hWnd2, SW_SHOW);
+	}
 }
 VOID MessageLoop()
 {
